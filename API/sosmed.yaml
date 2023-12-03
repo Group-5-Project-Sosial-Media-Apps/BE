@@ -1,0 +1,595 @@
+openapi: 3.0.0
+info:
+  description: |
+    This is a sample Sosmed server.
+  version: "1.0.0"
+  title: Sosmed
+  contact:
+    email: mhafidz.hidayat@gmail.com
+  license:
+    name: Apache 2.0
+    url: 'http://www.apache.org/licenses/LICENSE-2.0.html'
+servers:
+  # Added by API Auto Mocking Plugin
+  - description: SwaggerHub API Auto Mocking
+    url: https://virtserver.swaggerhub.com/ITSMEGOBIR/tessss/1.0.0
+  - url: 'https://petstore.swagger.io/v2'
+tags:
+  - name: User
+    description: Operations about user
+
+  - name: Posts
+    description: Everything about your Posts
+
+  - name: Comment
+    description: Everything about your Comment
+
+
+paths:
+  /login:
+    post:
+      tags:
+        - User
+      summary: User login
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Login'
+      responses:
+        '200':
+          description: Login successful
+          content:
+            application/json:
+              schema:
+                type: object
+                example:
+                  message: "Login Success"
+                  token: "ierwiehfsdfsnewoueyrwygejkdbfsejhsbdjbfse"
+        '400':
+          $ref: "#/components/responses/400"
+        '404':
+          $ref: "#/components/responses/404"
+        '405':
+          $ref: "#/components/responses/405"
+        '500':
+          $ref: "#/components/responses/500"
+
+
+  /register:
+    post:
+      tags:
+        - User
+      summary: Register
+      requestBody:
+        $ref: "#/components/requestBodies/register"
+      responses:
+        "200":
+          description: "registrasi berhasil"
+          content:
+            application/json:
+              schema: 
+                type: object
+                example:
+                  message: "register berhasil"
+                  data: 
+                    id: 1
+                    nama: "bedul"
+                    username: "bedul1"
+                    email: "bedul@gmail.com"
+        "400":
+          $ref: "#/components/responses/400"
+        "405":
+          $ref: "#/components/responses/405"
+        "500":
+          $ref: "#/components/responses/500"
+
+
+  /user/{id}:
+    get:
+      tags:
+        - User
+      summary: "get user by id"
+      parameters:
+        - in: path
+          name: id
+          required: true
+          schema: 
+            type: integer
+          example: 1
+      security:
+        - bearerAuth: []
+      responses:
+        "200":
+          description: "success get user by id"
+          content:
+            application/json:
+              example:
+                message: "berhasil berhasil horeee"
+                data:
+                  id: 1
+                  nama: "bedul"
+                  username: "bedul1"
+                  email: "bedul@gmail.com"
+        "400":
+          $ref: "#/components/responses/400"
+        "401":
+          $ref: "#/components/responses/401"
+        "405":
+          $ref: "#/components/responses/405"
+        "500":
+          $ref: "#/components/responses/500"
+
+
+    put:
+      tags:
+        - User
+      summary: Update user
+      parameters:
+        - in: path
+          name: id
+          required: true
+          schema:
+            type: integer
+          example: 1
+      security:
+        - bearerAuth: []
+      requestBody:
+        $ref: "#/components/requestBodies/updateUser"
+      responses:
+        "200":
+          description: "success update user"
+          content:
+            application/json:
+              example:
+                message: "success update user"
+                data: 
+                  id: 1
+                  nama: "bedul"
+                  username: "bedul1"
+                  email: "bedul@gmail.com"
+                  password: "bedulganteng"
+        "400":
+          $ref: "#/components/responses/400"
+        "401":
+          $ref: "#/components/responses/401"
+        "405":
+          $ref: "#/components/responses/405"
+        "500":
+          $ref: "#/components/responses/500"
+
+    delete:
+      tags:
+        - User
+      summary: delete user
+      parameters:
+        - in: path
+          name: id
+          required: true
+          schema: 
+            type: integer
+          example: 1
+      security:
+        - bearerAuth: []
+      responses:
+        "200":
+          description: "success delete user"
+          content:
+            application/json:
+              example:
+                message: "success delete user"
+                data: 
+                  id: 1
+                  nama: "bedul"
+                  username: "bedul1"
+                  email: "bedul@gmail.com"
+        "400":
+          $ref: "#/components/responses/400"
+        "401":
+          $ref: "#/components/responses/401"
+        "405":
+          $ref: "#/components/responses/405"
+        "500":
+          $ref: "#/components/responses/500"
+
+
+
+
+
+  /posts:
+    post:
+      tags:
+        - Posts
+      summary: postingan
+      requestBody:
+              $ref: '#/components/requestBodies/postCreate'
+      security:
+        - bearerAuth: []
+      responses:
+        "200":
+          description: "berhasil posting"
+          content:
+            application/json:
+              schema: 
+                type: object
+                example:
+                  message: "berhasil posting"
+                  data:
+                    id: 1
+                    pesan: "contoh postingan 1" 
+                    image: "/image/gambar1.png"
+                    user: 
+                      id: 1
+                      name: "bedul"
+                      username: "bedul1"
+        "400":
+          $ref: "#/components/responses/400"
+        "405":
+          $ref: "#/components/responses/405"
+        "500":
+          $ref: "#/components/responses/500"
+
+    get:
+      tags:
+        - Posts
+      summary: "get all posts"
+      parameters:
+        - in: query
+          name: page 
+          required: false 
+          schema: 
+           type: integer
+          example: 1
+        - in: query
+          name: pagesize 
+          required: false 
+          schema: 
+           type: integer
+          example: 2
+      responses:
+        "200": 
+          description: get all post from users
+          content:
+            application/json:
+              schema: 
+                type: object
+                example:
+                  message: "get all post"
+                  data:
+                  - id: 1
+                    pesan: "contoh postingan 1" 
+                    image: "/image/gambar1.png"
+                    user: 
+                      id: 1
+                      name: "bedul"
+                      username: "bedul1"
+                    comment:
+                      - id: 1
+                        text: "contoh comment 1"
+                        user: 
+                          id: 1
+                          name: "bedul"
+                          username: "bedul1"
+                  pagination:
+                    page: 1
+                    pagesize: 2
+        "400":
+          $ref: "#/components/responses/400"
+        "401":
+          $ref: "#/components/responses/401"
+        "405":
+          $ref: "#/components/responses/405"
+        "500":
+          $ref: "#/components/responses/500"
+
+  /posts/{id}:
+    put:
+      tags:
+        - Posts 
+      summary: "update post"
+      parameters:
+        - in: path
+          name: id
+          required: true
+          schema: 
+            type: integer
+          example: 1 
+      requestBody: 
+        $ref: "#/components/requestBodies/postUpdate"
+      security:
+        - bearerAuth: []
+      responses:
+        "200": 
+          description: "success update post"
+          content:
+            application/json:
+              example: 
+                message: "success update post"
+                data:
+                  id: 1
+                  pesan: "contoh postingan 1" 
+                  image: "/image/gambar1.png"
+                  user: 
+                      id: 1
+                      name: "bedul"
+                      username: "bedul1"
+        "400":
+          $ref: "#/components/responses/400"
+        "401":
+          $ref: "#/components/responses/401"
+        "405":
+          $ref: "#/components/responses/405"
+        "500":
+          $ref: "#/components/responses/500"
+
+    delete:
+      tags:
+        - Posts 
+      summary: "delete post" 
+      parameters:
+        - in: path
+          name: id
+          required: true
+          schema: 
+            type: integer
+          example: 1
+      security:
+        - bearerAuth: []
+      responses:
+        "200": 
+          description: "sussess delete post" 
+          content:
+            application/json:
+              example:
+                message: "success delete post"
+                data:
+                  id: 1
+                  pesan: "contoh postingan 1" 
+                  image: "/image/gambar1.png"
+                  user: 
+                      id: 1
+                      name: "bedul"
+                      username: "bedul1"
+        "400":
+          $ref: "#/components/responses/400"
+        "401":
+          $ref: "#/components/responses/401"
+        "405":
+          $ref: "#/components/responses/405"
+        "500":
+          $ref: "#/components/responses/500"
+
+
+  /comments:
+    post:
+      tags:
+        - Comment 
+      summary: "create comment"
+      requestBody:
+        $ref: "#/components/requestBodies/createcomment"
+      security:
+        - bearerAuth: []
+      responses:
+        "200":
+          description: "success create comment" 
+          content:
+            application/json:
+              example:
+                message: "success create comment" 
+                data: 
+                  id: 1
+                  text: "contoh comment 1"
+                  user: 
+                    id: 1
+                    nama: "bedul" 
+                    username: "bedul1"
+        "400":
+          $ref: "#/components/responses/400"
+        "401":
+          $ref: "#/components/responses/401"
+        "405":
+          $ref: "#/components/responses/405"
+        "500":
+          $ref: "#/components/responses/500"
+
+  /comments/{id}:
+    delete:
+      tags:
+        - Comment 
+      summary: "delete comment" 
+      parameters:
+        - in: path
+          name: id
+          required: true
+          schema: 
+            type: integer
+          example: 1 
+      security:
+        - bearerAuth: []
+      responses:
+        "200":
+          description: "success delete comment"
+          content:
+            application/json:
+              example:
+                message: "success delete comment"
+                data: 
+                  id: 1
+                  text: "contoh comment 1"
+                  user: 
+                    id: 1
+                    nama: "bedul" 
+                    username: "bedul1"
+        "400":
+          $ref: "#/components/responses/400"
+        "401":
+          $ref: "#/components/responses/401"
+        "405":
+          $ref: "#/components/responses/405"
+        "500":
+          $ref: "#/components/responses/500"
+
+
+components:
+  schemas:
+    Login: 
+     type: object
+     properties:
+       username:
+        type: string
+       password:
+        type: string
+     example:
+      username: bedul1
+      password: bedulganteng
+
+    registerReq:
+      type: object
+      required:
+        - "nama"
+        - "username"
+        - "email"
+        - "password"
+      properties:
+        nama:
+          type: string
+          example: "bedul"
+        username:
+          type: string
+          example: "bedul1"
+        email:
+          type: string
+          example: "bedul@gmail.com"
+        password:
+          type: string
+          example: "bedulganteng"
+
+
+    postCreateReq:
+      type: object
+      required:
+        - "pesan"
+      properties:
+        pesan:
+          type: string
+        image:
+          type: string
+          format: binary
+
+    postUpdateReq:
+      type: object
+      properties:
+        pesan:
+          type: string
+        image:
+          type: string
+          format: binary
+
+    userUpdateReq:
+      type: object
+      properties:
+        name:
+          type: string
+        username:
+          type: string
+        email:
+          type: string
+        password:
+          type: string
+
+    commentCreateReq:
+      type: object
+      required:
+        - "id_post"
+        - "text"
+      properties:
+        id_post:
+          type: integer
+          example: 1
+        text:
+          type: string
+          example: "contoh comment 1"
+          
+
+  requestBodies:
+    postCreate:
+      content:
+        multipart/form-data:
+          schema:
+            $ref: "#/components/schemas/postCreateReq"
+
+    postUpdate: 
+      content:
+        multipart/form-data:
+          schema: 
+            $ref: "#/components/schemas/postUpdateReq"
+
+    register: 
+      content:
+        multipart/form-data:
+          schema: 
+            $ref: "#/components/schemas/registerReq"
+        application/json:
+          schema: 
+            $ref: "#/components/schemas/registerReq"
+
+    updateUser:
+      content:
+        multipart/form-data:
+          schema: 
+            $ref: "#/components/schemas/userUpdateReq"
+        application/json:
+          schema: 
+            $ref: "#/components/schemas/userUpdateReq"
+        
+
+    createcomment:
+      content:
+        multipart/form-data:
+          schema: 
+            $ref: "#/components/schemas/commentCreateReq"
+        application/json:
+          schema: 
+            $ref: "#/components/schemas/commentCreateReq"
+
+
+
+  securitySchemes:
+    bearerAuth:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT
+
+
+  responses:
+    "400":
+      description: "bad request"
+      content:
+        application/json:
+          example:
+            message: "bad request"
+    "401":
+      description: "unauthorized"
+      content:
+        application/json:
+          example:
+            message: "unauthorized"
+    "404":
+      description: "not found"
+      content:
+        application/json:
+          example:
+            message: "not found"
+    "405":
+      description: "method not allowed"
+      content:
+        application/json:
+          example:
+            message: "method not allowed"
+    "500":
+      description: "internal server error"
+      content:
+        application/json:
+          example:
+            message: "internal server error"
