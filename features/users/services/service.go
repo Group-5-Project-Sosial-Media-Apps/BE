@@ -63,3 +63,16 @@ func (us *userService) Login(username string, password string) (users.User, erro
 
 	return result, nil
 }
+
+func (us *userService) GetUserById(id uint) (users.User, error) {
+	result, err := us.repo.GetUserById(id)
+
+	if err != nil {
+		if strings.Contains(err.Error(), "not found") {
+			return users.User{}, errors.New("username tidak ditemukan")
+		}
+		return users.User{}, errors.New("terjadi kesalahan pada sistem")
+	}
+
+	return result, nil
+}
