@@ -101,3 +101,32 @@ func (uc *userController) Login() echo.HandlerFunc {
 		})
 	}
 }
+
+func (uc *userController) GetUserById() echo.HandlerFunc {
+	return func(c echo.Context) error {
+		var input = new(GetUserByIdRequest)
+		if err := c.Bind(input); err != nil {
+			return c.JSON(http.StatusBadRequest, map[string]any{
+				"message": "input yang diberikan tidak sesuai",
+			})
+		}
+
+		result, err := uc.srv.GetUserById(input.ID)
+		if err != nil || input.ID != result.ID || input.ID == 0 {
+			return c.JSON(http.StatusBadRequest, map[string]any{
+				"message": "user tidak ditemukan",
+			})
+		}
+		var response = new(GetUserByIdResponse)
+		response.ID = result.ID
+		response.Nama = result.Nama
+		response.UserName = result.UserName
+		response.Email = result.Email
+		response.Foto = result.Foto
+
+		return c.JSON(http.StatusOK, map[string]any{
+			"message": "get user by userID successful",
+			"data":    response,
+		})
+	}
+}

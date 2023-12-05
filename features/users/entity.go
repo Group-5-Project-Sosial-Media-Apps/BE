@@ -14,14 +14,17 @@ type User struct {
 type Handler interface {
 	Register() echo.HandlerFunc
 	Login() echo.HandlerFunc
+	GetUserById() echo.HandlerFunc
 }
 
 type Service interface {
 	Register(newUser User) (User, error)
 	Login(username string, password string) (User, error)
+	GetUserById(id uint) (User, error)
 }
 
 type Repository interface {
 	Register(newUser User) (User, error)
 	Login(username string) (User, error)
+	GetUserById(id uint) (User, error)
 }
