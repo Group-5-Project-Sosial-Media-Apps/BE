@@ -20,4 +20,6 @@ func routeUser(e *echo.Echo, uc users.Handler) {
 
 	e.POST("/register", uc.Register())
 	e.POST("/login", uc.Login())
+
+	e.DELETE("/user/id", uc.DelUserById())
 }

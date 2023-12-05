@@ -76,3 +76,15 @@ func (us *userService) GetUserById(id uint) (users.User, error) {
 
 	return result, nil
 }
+
+func (us *userService) DelUserById(id uint) (users.User, error) {
+	result, err := us.repo.DelUserById(id)
+
+	if err != nil {
+		if strings.Contains(err.Error(), "not found") {
+			return users.User{}, errors.New("username tidak ditemukan")
+		}
+		return users.User{}, errors.New("terjadi kesalahan pada sistem")
+	}
+	return result, nil
+}

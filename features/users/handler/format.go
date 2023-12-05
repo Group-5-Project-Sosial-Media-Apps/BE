@@ -37,3 +37,14 @@ type GetUserByIdResponse struct {
 	Email    string `json:"email"`
 	Foto     string `json:"foto"`
 }
+
+type DelUserByIdRequest struct {
+	ID uint `json:"id"`
+}
+
+type DelUserByIdResponse struct {
+	ID       uint   `json:"id"`
+	Nama     string `json:"nama"`
+	UserName string `json:"username"`
+	Email    string `json:"email"`
+}
