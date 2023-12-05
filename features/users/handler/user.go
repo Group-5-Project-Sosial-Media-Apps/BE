@@ -130,3 +130,31 @@ func (uc *userController) GetUserById() echo.HandlerFunc {
 		})
 	}
 }
+
+func (uc *userController) DelUserById() echo.HandlerFunc {
+	return func(c echo.Context) error {
+		var input = new(DelUserByIdRequest)
+		if err := c.Bind(input); err != nil {
+			return c.JSON(http.StatusBadRequest, map[string]any{
+				"message": "input yang diberikan tidak sesuai",
+			})
+		}
+
+		result, err := uc.srv.DelUserById(input.ID)
+		if err != nil || input.ID != result.ID || input.ID == 0 {
+			return c.JSON(http.StatusBadRequest, map[string]any{
+				"message": "user tidak ditemukan",
+			})
+		}
+		var response = new(DelUserByIdResponse)
+		response.ID = result.ID
+		response.Nama = result.Nama
+		response.UserName = result.UserName
+		response.Email = result.Email
+
+		return c.JSON(http.StatusOK, map[string]any{
+			"message": "delete user by userID successful",
+			"data":    response,
+		})
+	}
+}
