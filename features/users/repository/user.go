@@ -74,3 +74,21 @@ func (uq *userQuery) GetUserById(id uint) (users.User, error) {
 
 	return *result, nil
 }
+
+func (uq *userQuery) DelUserById(id uint) (users.User, error) {
+	var userData = new(UserModel)
+
+	if err := uq.db.Where("id", id).Find(&userData).Error; err != nil {
+		return users.User{}, err
+	}
+
+	var result = new(users.User)
+
+	result.ID = userData.ID
+	result.Nama = userData.Nama
+	result.UserName = userData.UserName
+	result.Email = userData.Email
+
+	uq.db.Where("id", id).Delete(&userData)
+	return *result, nil
+}
