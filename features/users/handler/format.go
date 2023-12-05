@@ -25,3 +25,15 @@ type LoginResponse struct {
 	UserName string `json:"username"`
 	Token    string `json:"token"`
 }
+
+type GetUserByIdRequest struct {
+	ID uint `json:"id"`
+}
+
+type GetUserByIdResponse struct {
+	ID       uint   `json:"id"`
+	Nama     string `json:"nama"`
+	UserName string `json:"username"`
+	Email    string `json:"email"`
+	Foto     string `json:"foto"`
+}
