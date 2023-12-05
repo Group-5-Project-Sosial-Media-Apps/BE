@@ -45,3 +45,21 @@ func (us *userService) Register(newUser users.User) (users.User, error) {
 	return result, nil
 }
 
+func (us *userService) Login(username string, password string) (users.User, error) {
+	result, err := us.repo.Login(username)
+
+	if err != nil {
+		if strings.Contains(err.Error(), "not found") {
+			return users.User{}, errors.New("username tidak ditemukan")
+		}
+		return users.User{}, errors.New("terjadi kesalahan pada sistem")
+	}
+
+	err = us.h.Compare(result.Password, password)
+
+	if err != nil {
+		return users.User{}, errors.New("password salah")
+	}
+
+	return result, nil
+}

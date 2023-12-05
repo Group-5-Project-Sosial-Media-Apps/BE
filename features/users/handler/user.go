@@ -3,7 +3,7 @@ package user
 import (
 	"net/http"
 	"sosmed/features/users"
-	// "sosmed/helper/jwt"
+	"sosmed/helper/jwt"
 	"sosmed/helper/responses"
 	"strings"
 
@@ -57,5 +57,47 @@ func (uc *userController) Register() echo.HandlerFunc {
 		response.Email = result.Email
 
 		return responses.PrintResponse(c, http.StatusCreated, "success create data", response)
+	}
+}
+
+func (uc *userController) Login() echo.HandlerFunc {
+	return func(c echo.Context) error {
+		var input = new(LoginRequest)
+		if err := c.Bind(input); err != nil {
+			return c.JSON(http.StatusBadRequest, map[string]any{
+				"message": "input yang diberikan tidak sesuai",
+			})
+		}
+
+		result, err := uc.srv.Login(input.UserName, input.Password)
+
+		if err != nil {
+			c.Logger().Error("ERROR Login, explain:", err.Error())
+			if strings.Contains(err.Error(), "not found") {
+				return c.JSON(http.StatusBadRequest, map[string]any{
+					"message": "data yang diinputkan tidak ditemukan",
+				})
+			}
+			return c.JSON(http.StatusInternalServerError, map[string]any{
+				"message": "terjadi permasalahan ketika memproses data",
+			})
+		}
+
+		strToken, err := jwt.GenerateJWT(result.ID)
+		if err != nil {
+			return c.JSON(http.StatusInternalServerError, map[string]any{
+				"message": "terjadi permasalahan ketika mengenkripsi data",
+			})
+		}
+
+		var response = new(LoginResponse)
+		response.Nama = result.Nama
+		response.ID = result.ID
+		response.Token = strToken
+
+		return c.JSON(http.StatusOK, map[string]any{
+			"message": "login success",
+			"data":    response,
+		})
 	}
 }

@@ -28,6 +28,7 @@ func New(db *gorm.DB) users.Repository {
 func (uq *userQuery) Register(newUser users.User) (users.User, error) {
 	var inputDB = new(UserModel)
 	inputDB.Nama = newUser.Nama
+	inputDB.Email = newUser.Email
 	inputDB.UserName = newUser.UserName
 	inputDB.Password = newUser.Password
 
@@ -38,4 +39,20 @@ func (uq *userQuery) Register(newUser users.User) (users.User, error) {
 	newUser.ID = inputDB.ID
 
 	return newUser, nil
+}
+
+func (uq *userQuery) Login(username string) (users.User, error) {
+	var userData = new(UserModel)
+
+	if err := uq.db.Where("user_name", username).First(userData).Error; err != nil {
+		return users.User{}, err
+	}
+
+	var result = new(users.User)
+
+	result.ID = userData.ID
+	result.Nama = userData.Nama
+	result.Password = userData.Password
+
+	return *result, nil
 }
