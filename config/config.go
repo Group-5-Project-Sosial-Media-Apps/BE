@@ -13,6 +13,10 @@ type AppConfig struct {
 	DBPASS string
 	DBNAME string
 	DBPORT uint16
+	CLOUDINARY_CLD    string
+	CLOUDINARY_KEY    string
+	CLOUDINARY_SECRET string
+	CLOUDINARY_FOLDER string
 }
 
 func InitConfig() *AppConfig {
@@ -78,6 +82,27 @@ func readEnv() *AppConfig {
 
 	if !permit {
 		return nil
+	}
+
+	if val, found := os.LookupEnv("CLOUDINARY_CLD"); found {
+		data.CLOUDINARY_CLD = val
+	} else {
+		permit = false
+	}
+	if val, found := os.LookupEnv("CLOUDINARY_KEY"); found {
+		data.CLOUDINARY_KEY = val
+	} else {
+		permit = false
+	}
+	if val, found := os.LookupEnv("CLOUDINARY_SECRET"); found {
+		data.CLOUDINARY_SECRET = val
+	} else {
+		permit = false
+	}
+	if val, found := os.LookupEnv("CLOUDINARY_FOLDER"); found {
+		data.CLOUDINARY_FOLDER = val
+	} else {
+		permit = false
 	}
 
 	return data
