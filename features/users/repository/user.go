@@ -36,7 +36,7 @@ func (uq *userQuery) Register(newUser users.User) (users.User, error) {
 		return users.User{}, err
 	}
 
-	newUser.ID = inputDB.ID
+	newUser.UserID = inputDB.ID
 
 	return newUser, nil
 }
@@ -50,10 +50,11 @@ func (uq *userQuery) Login(username string) (users.User, error) {
 
 	var result = new(users.User)
 
-	result.ID = userData.ID
+	result.UserID = userData.ID
 	result.Nama = userData.Nama
 	result.Password = userData.Password
-
+	result.UserName = userData.UserName
+	
 	return *result, nil
 }
 
@@ -66,7 +67,7 @@ func (uq *userQuery) GetUserById(id uint) (users.User, error) {
 
 	var result = new(users.User)
 
-	result.ID = userData.ID
+	result.UserID = userData.ID
 	result.Nama = userData.Nama
 	result.UserName = userData.UserName
 	result.Email = userData.Email
@@ -84,7 +85,7 @@ func (uq *userQuery) DelUserById(id uint) (users.User, error) {
 
 	var result = new(users.User)
 
-	result.ID = userData.ID
+	result.UserID = userData.ID
 	result.Nama = userData.Nama
 	result.UserName = userData.UserName
 	result.Email = userData.Email
@@ -104,8 +105,10 @@ func (us *userQuery) UpdateUser(id uint, updateUser users.User) (users.User, err
 		return users.User{}, err
 	}
 
-	if updateUser.ID != 0 {
-		existingUser.ID = updateUser.ID
+
+	if updateUser.UserID != 0 {
+		existingUser.ID = updateUser.UserID
+
 	}
 
 	if updateUser.Nama != "" {
@@ -124,7 +127,9 @@ func (us *userQuery) UpdateUser(id uint, updateUser users.User) (users.User, err
 
 
 	result := users.User{
-		ID: id,
+
+		UserID: id,
+
 		Nama: existingUser.Nama,
 		UserName: existingUser.UserName,
 		Foto: existingUser.Foto,
