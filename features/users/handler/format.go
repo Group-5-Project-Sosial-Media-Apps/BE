@@ -48,3 +48,10 @@ type DelUserByIdResponse struct {
 	UserName string `json:"username"`
 	Email    string `json:"email"`
 }
+
+type UserUpdate struct {
+	ID       uint   `form:"id"`
+	Nama     string `form:"nama"`
+	UserName string `form:"username"`
+	Foto     string `form:"foto"`
+}

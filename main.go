@@ -6,6 +6,7 @@ import (
 	ur "sosmed/features/users/repository"
 	us "sosmed/features/users/services"
 	nk "sosmed/helper/enkrip"
+	cld "sosmed/utils/cloudinary"
 	"sosmed/routes"
 
 	"sosmed/utils/database"
@@ -22,6 +23,7 @@ func main() {
 		e.Logger.Fatal("tidak bisa start karena ENV error")
 		return
 	}
+	cld, ctx, param := cld.InitCloudnr(*cfg)
 
 	db, err := database.InitMySQL(*cfg)
 
@@ -34,7 +36,7 @@ func main() {
 
 	usersRepo := ur.New(db)
 	userService := us.New(usersRepo, nk.New())
-	userHandler := uh.New(userService)
+	userHandler := uh.New(userService, cld, ctx, param)
 
 	routes.InitRoute(e, userHandler)
 
