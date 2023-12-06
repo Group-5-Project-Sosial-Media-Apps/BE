@@ -3,7 +3,7 @@ package users
 import "github.com/labstack/echo/v4"
 
 type User struct {
-	ID       uint
+	UserID       uint
 	Nama     string
 	UserName string
 	Password string

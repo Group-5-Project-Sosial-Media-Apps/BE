@@ -95,9 +95,7 @@ func (up *userService) UpdateUser(id uint, updateUser users.User) (users.User, e
 		return users.User{}, errors.New("invalid user ID")
 	}
 
-	// if updateUser.Nama == "" || updateUser.UserName == "" || updateUser.Foto == "" {
-	// 	return users.User{}, errors.New("incorrect input data")
-	// }
+
 
 	result, err := up.repo.UpdateUser(id, updateUser)
 	if err != nil {

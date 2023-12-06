@@ -63,7 +63,7 @@ func (uc *userController) Register() echo.HandlerFunc {
 		}
 
 		var response = new(UserResponse)
-		response.ID = result.ID
+		// response.UserID = result.UserID
 		response.Nama = result.Nama
 		response.UserName = result.UserName
 		response.Email = result.Email
@@ -95,7 +95,7 @@ func (uc *userController) Login() echo.HandlerFunc {
 			})
 		}
 
-		strToken, err := jwt.GenerateJWT(result.ID)
+		strToken, err := jwt.GenerateJWT(result.UserID)
 		if err != nil {
 			return c.JSON(http.StatusInternalServerError, map[string]any{
 				"message": "terjadi permasalahan ketika mengenkripsi data",
@@ -103,8 +103,9 @@ func (uc *userController) Login() echo.HandlerFunc {
 		}
 
 		var response = new(LoginResponse)
+		response.UserID = result.UserID
 		response.Nama = result.Nama
-		response.ID = result.ID
+		response.UserName = result.UserName
 		response.Token = strToken
 
 		return c.JSON(http.StatusOK, map[string]any{
@@ -123,14 +124,15 @@ func (uc *userController) GetUserById() echo.HandlerFunc {
 			})
 		}
 
-		result, err := uc.srv.GetUserById(input.ID)
-		if err != nil || input.ID != result.ID || input.ID == 0 {
+		result, err := uc.srv.GetUserById(input.UserID)
+		if err != nil || input.UserID != result.UserID || input.UserID == 0 {
 			return c.JSON(http.StatusBadRequest, map[string]any{
 				"message": "user tidak ditemukan",
 			})
 		}
+
 		var response = new(GetUserByIdResponse)
-		response.ID = result.ID
+		response.UserID = result.UserID
 		response.Nama = result.Nama
 		response.UserName = result.UserName
 		response.Email = result.Email
@@ -152,14 +154,14 @@ func (uc *userController) DelUserById() echo.HandlerFunc {
 			})
 		}
 
-		result, err := uc.srv.DelUserById(input.ID)
-		if err != nil || input.ID != result.ID || input.ID == 0 {
+		result, err := uc.srv.DelUserById(input.UserID)
+		if err != nil || input.UserID != result.UserID || input.UserID == 0 {
 			return c.JSON(http.StatusBadRequest, map[string]any{
 				"message": "user tidak ditemukan",
 			})
 		}
 		var response = new(DelUserByIdResponse)
-		response.ID = result.ID
+		response.UserID = result.UserID
 		response.Nama = result.Nama
 		response.UserName = result.UserName
 		response.Email = result.Email
@@ -171,7 +173,6 @@ func (uc *userController) DelUserById() echo.HandlerFunc {
 	}
 }
 
-
 func (up *userController) UpdateUser() echo.HandlerFunc {
 	return func(c echo.Context) error {
 		userID, _ := jwt.ExtractToken(c.Get("user").(*golangjwt.Token))
@@ -182,40 +183,48 @@ func (up *userController) UpdateUser() echo.HandlerFunc {
 			})
 		}
 
-		formHeader, err := c.FormFile("foto")
-		if err != nil {
-			return c.JSON(
-				http.StatusInternalServerError, map[string]any{
-					"messege": "formheader error",
-				})
-		}
 
-		formFile, err := formHeader.Open()
-		if err != nil {
-			return c.JSON(
-				http.StatusInternalServerError, map[string]any{
-					"message": "formfile error",
-				})
-		}
+		formHeader, _ := c.FormFile("foto")
+		// if err != nil {
+		// 	return c.JSON(
+		// 		http.StatusInternalServerError, map[string]any{
+		// 			"messege": "formheader error",
+		// 		})
+		// }
 
-		link, err := cld.UploadImage(up.cl, up.ct, formFile, up.folder)
-		if err != nil {
-			if strings.Contains(err.Error(), "not found") {
-				return c.JSON(http.StatusBadRequest, map[string]any{
-					"message": "harap pilih gambar",
-					"data":    nil,
-				})
-			} else {
-				return c.JSON(http.StatusInternalServerError, map[string]any{
-					"message": "kesalahan pada server",
-					"data":    nil,
-				})
+		var link string
+
+		if formHeader != nil {
+
+			formFile, err := formHeader.Open()
+			if err != nil {
+				return c.JSON(
+					http.StatusInternalServerError, map[string]any{
+						"message": "formfile error",
+					})
 			}
+
+			link, err = cld.UploadImage(up.cl, up.ct, formFile, up.folder)
+			if err != nil {
+				if strings.Contains(err.Error(), "not found") {
+					return c.JSON(http.StatusBadRequest, map[string]any{
+						"message": "harap pilih gambar",
+						"data":    nil,
+					})
+				} else {
+					return c.JSON(http.StatusInternalServerError, map[string]any{
+						"message": "kesalahan pada server",
+						"data":    nil,
+					})
+				}
+			}
+
+			// var update = link
+
+			input.Foto = link
+			
 		}
-
-		// var update = link
-
-		input.Foto = link
+		
 
 		updatedUser := users.User{
 			Nama:     input.Nama,
@@ -231,10 +240,12 @@ func (up *userController) UpdateUser() echo.HandlerFunc {
 			})
 		}
 
+		
 		result.Foto = link
 
 		var response = &UserUpdate{
-			ID:       result.ID,
+			UserID:   result.UserID,
+
 			Nama:     result.Nama,
 			UserName: result.UserName,
 			Foto:     result.Foto,

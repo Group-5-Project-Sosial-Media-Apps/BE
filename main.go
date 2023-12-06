@@ -5,6 +5,12 @@ import (
 	uh "sosmed/features/users/handler"
 	ur "sosmed/features/users/repository"
 	us "sosmed/features/users/services"
+
+	ph "sosmed/features/posting/handler"
+	pr "sosmed/features/posting/repository"
+	ps "sosmed/features/posting/services"
+
+
 	nk "sosmed/helper/enkrip"
 	cld "sosmed/utils/cloudinary"
 	"sosmed/routes"
@@ -32,13 +38,17 @@ func main() {
 		return
 	}
 
-	db.AutoMigrate(&ur.UserModel{})
+	db.AutoMigrate(&ur.UserModel{}, &pr.PostingModel{})
 
 	usersRepo := ur.New(db)
 	userService := us.New(usersRepo, nk.New())
 	userHandler := uh.New(userService, cld, ctx, param)
 
-	routes.InitRoute(e, userHandler)
+	postingRepo := pr.New(db)
+	postingService := ps.New(postingRepo)
+	postingHandler := ph.New(postingService, cld, ctx, param)
+
+	routes.InitRoute(e, userHandler, postingHandler)
 
 	e.Logger.Fatal(e.Start(":8000"))
 }
