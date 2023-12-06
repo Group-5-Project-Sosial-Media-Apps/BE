@@ -183,6 +183,7 @@ func (up *userController) UpdateUser() echo.HandlerFunc {
 			})
 		}
 
+
 		formHeader, _ := c.FormFile("foto")
 		// if err != nil {
 		// 	return c.JSON(
@@ -224,12 +225,13 @@ func (up *userController) UpdateUser() echo.HandlerFunc {
 			
 		}
 		
+
 		updatedUser := users.User{
 			Nama:     input.Nama,
 			UserName: input.UserName,
 			Foto:     input.Foto,
 		}
-		
+
 		result, err := up.srv.UpdateUser(userID, updatedUser)
 		if err != nil {
 			c.Logger().Error("ERROR UpdateUser, explain:", err.Error())
@@ -237,11 +239,13 @@ func (up *userController) UpdateUser() echo.HandlerFunc {
 				"message": "failed to update user",
 			})
 		}
+
 		
 		result.Foto = link
 
 		var response = &UserUpdate{
 			UserID:   result.UserID,
+
 			Nama:     result.Nama,
 			UserName: result.UserName,
 			Foto:     result.Foto,

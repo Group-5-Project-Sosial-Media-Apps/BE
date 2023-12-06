@@ -26,6 +26,8 @@ func routeUser(e *echo.Echo, uc users.Handler) {
 	e.PUT("/updateuser", uc.UpdateUser(), echojwt.JWT([]byte("$!1gnK3yyy!!!")))
 }
 
+
 func routePosting(e *echo.Echo, bc posting.Handler) {
 	e.POST("/post", bc.Add(), echojwt.JWT([]byte("$!1gnK3yyy!!!")))
+
 }

@@ -105,8 +105,10 @@ func (us *userQuery) UpdateUser(id uint, updateUser users.User) (users.User, err
 		return users.User{}, err
 	}
 
+
 	if updateUser.UserID != 0 {
 		existingUser.ID = updateUser.UserID
+
 	}
 
 	if updateUser.Nama != "" {
@@ -125,7 +127,9 @@ func (us *userQuery) UpdateUser(id uint, updateUser users.User) (users.User, err
 
 
 	result := users.User{
+
 		UserID: id,
+
 		Nama: existingUser.Nama,
 		UserName: existingUser.UserName,
 		Foto: existingUser.Foto,
