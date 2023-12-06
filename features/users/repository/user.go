@@ -92,3 +92,45 @@ func (uq *userQuery) DelUserById(id uint) (users.User, error) {
 	uq.db.Where("id", id).Delete(&userData)
 	return *result, nil
 }
+
+
+func (us *userQuery) UpdateUser(id uint, updateUser users.User) (users.User, error) {
+	var existingUser = new(UserModel)
+	existingUser.Nama = updateUser.Nama
+	existingUser.UserName = updateUser.UserName
+	existingUser.Foto = updateUser.Foto
+
+	if err := us.db.Where("id = ?", id).Updates(existingUser).Error; err != nil {
+		return users.User{}, err
+	}
+
+	if updateUser.ID != 0 {
+		existingUser.ID = updateUser.ID
+	}
+
+	if updateUser.Nama != "" {
+		existingUser.Nama = updateUser.Nama
+	}
+
+	if updateUser.UserName != "" {
+		existingUser.UserName = updateUser.UserName
+	}
+
+	if updateUser.Foto != "" {
+		existingUser.Foto = updateUser.Foto
+	}
+
+
+
+
+	result := users.User{
+		ID: id,
+		Nama: existingUser.Nama,
+		UserName: existingUser.UserName,
+		Foto: existingUser.Foto,
+	}
+
+	return result, nil
+
+
+}
