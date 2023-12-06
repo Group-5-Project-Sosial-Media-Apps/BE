@@ -1,22 +1,34 @@
 package user
 
 import (
+	"context"
 	"net/http"
 	"sosmed/features/users"
 	"sosmed/helper/jwt"
 	"sosmed/helper/responses"
 	"strings"
 
+	cld "sosmed/utils/cloudinary"
+
+	"github.com/cloudinary/cloudinary-go/v2"
+	golangjwt "github.com/golang-jwt/jwt/v5"
+
 	"github.com/labstack/echo/v4"
 )
 
 type userController struct {
-	srv users.Service
+	srv    users.Service
+	cl     *cloudinary.Cloudinary
+	ct     context.Context
+	folder string
 }
 
-func New(s users.Service) users.Handler {
+func New(s users.Service, cld *cloudinary.Cloudinary, ctx context.Context, uploadparam string) users.Handler {
 	return &userController{
-		srv: s,
+		srv:    s,
+		cl:     cld,
+		ct:     ctx,
+		folder: uploadparam,
 	}
 }
 
@@ -51,7 +63,7 @@ func (uc *userController) Register() echo.HandlerFunc {
 		}
 
 		var response = new(UserResponse)
-		response.ID = result.ID
+		// response.UserID = result.UserID
 		response.Nama = result.Nama
 		response.UserName = result.UserName
 		response.Email = result.Email
@@ -83,7 +95,7 @@ func (uc *userController) Login() echo.HandlerFunc {
 			})
 		}
 
-		strToken, err := jwt.GenerateJWT(result.ID)
+		strToken, err := jwt.GenerateJWT(result.UserID)
 		if err != nil {
 			return c.JSON(http.StatusInternalServerError, map[string]any{
 				"message": "terjadi permasalahan ketika mengenkripsi data",
@@ -91,8 +103,9 @@ func (uc *userController) Login() echo.HandlerFunc {
 		}
 
 		var response = new(LoginResponse)
+		response.UserID = result.UserID
 		response.Nama = result.Nama
-		response.ID = result.ID
+		response.UserName = result.UserName
 		response.Token = strToken
 
 		return c.JSON(http.StatusOK, map[string]any{
@@ -111,14 +124,15 @@ func (uc *userController) GetUserById() echo.HandlerFunc {
 			})
 		}
 
-		result, err := uc.srv.GetUserById(input.ID)
-		if err != nil || input.ID != result.ID || input.ID == 0 {
+		result, err := uc.srv.GetUserById(input.UserID)
+		if err != nil || input.UserID != result.UserID || input.UserID == 0 {
 			return c.JSON(http.StatusBadRequest, map[string]any{
 				"message": "user tidak ditemukan",
 			})
 		}
+
 		var response = new(GetUserByIdResponse)
-		response.ID = result.ID
+		response.UserID = result.UserID
 		response.Nama = result.Nama
 		response.UserName = result.UserName
 		response.Email = result.Email
@@ -140,14 +154,14 @@ func (uc *userController) DelUserById() echo.HandlerFunc {
 			})
 		}
 
-		result, err := uc.srv.DelUserById(input.ID)
-		if err != nil || input.ID != result.ID || input.ID == 0 {
+		result, err := uc.srv.DelUserById(input.UserID)
+		if err != nil || input.UserID != result.UserID || input.UserID == 0 {
 			return c.JSON(http.StatusBadRequest, map[string]any{
 				"message": "user tidak ditemukan",
 			})
 		}
 		var response = new(DelUserByIdResponse)
-		response.ID = result.ID
+		response.UserID = result.UserID
 		response.Nama = result.Nama
 		response.UserName = result.UserName
 		response.Email = result.Email
@@ -157,4 +171,87 @@ func (uc *userController) DelUserById() echo.HandlerFunc {
 			"data":    response,
 		})
 	}
+}
+
+func (up *userController) UpdateUser() echo.HandlerFunc {
+	return func(c echo.Context) error {
+		userID, _ := jwt.ExtractToken(c.Get("user").(*golangjwt.Token))
+		var input = new(UserUpdate)
+		if err := c.Bind(input); err != nil {
+			return c.JSON(http.StatusBadRequest, map[string]interface{}{
+				"message": "invalid input",
+			})
+		}
+
+		formHeader, _ := c.FormFile("foto")
+		// if err != nil {
+		// 	return c.JSON(
+		// 		http.StatusInternalServerError, map[string]any{
+		// 			"messege": "formheader error",
+		// 		})
+		// }
+
+		var link string
+
+		if formHeader != nil {
+
+			formFile, err := formHeader.Open()
+			if err != nil {
+				return c.JSON(
+					http.StatusInternalServerError, map[string]any{
+						"message": "formfile error",
+					})
+			}
+
+			link, err = cld.UploadImage(up.cl, up.ct, formFile, up.folder)
+			if err != nil {
+				if strings.Contains(err.Error(), "not found") {
+					return c.JSON(http.StatusBadRequest, map[string]any{
+						"message": "harap pilih gambar",
+						"data":    nil,
+					})
+				} else {
+					return c.JSON(http.StatusInternalServerError, map[string]any{
+						"message": "kesalahan pada server",
+						"data":    nil,
+					})
+				}
+			}
+
+			// var update = link
+
+			input.Foto = link
+			
+		}
+		
+		updatedUser := users.User{
+			Nama:     input.Nama,
+			UserName: input.UserName,
+			Foto:     input.Foto,
+		}
+		
+		result, err := up.srv.UpdateUser(userID, updatedUser)
+		if err != nil {
+			c.Logger().Error("ERROR UpdateUser, explain:", err.Error())
+			return c.JSON(http.StatusInternalServerError, map[string]interface{}{
+				"message": "failed to update user",
+			})
+		}
+		
+		result.Foto = link
+
+		var response = &UserUpdate{
+			UserID:   result.UserID,
+			Nama:     result.Nama,
+			UserName: result.UserName,
+			Foto:     result.Foto,
+		}
+
+		return c.JSON(http.StatusOK, map[string]interface{}{
+			"message": "user updated successfully",
+			"data":    response,
+		})
+
+	}
+
 }

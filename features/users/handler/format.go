@@ -8,7 +8,7 @@ type UserRequest struct {
 }
 
 type UserResponse struct {
-	ID       uint   `json:"id"`
+	// UserID       uint   `json:"user_id"`
 	Nama     string `json:"nama"`
 	UserName string `json:"username"`
 	Email    string `json:"email"`
@@ -20,18 +20,18 @@ type LoginRequest struct {
 }
 
 type LoginResponse struct {
-	ID       uint   `json:"id"`
+	UserID       uint   `json:"user_id"`
 	Nama     string `json:"nama"`
 	UserName string `json:"username"`
 	Token    string `json:"token"`
 }
 
 type GetUserByIdRequest struct {
-	ID uint `json:"id"`
+	UserID uint `json:"user_id"`
 }
 
 type GetUserByIdResponse struct {
-	ID       uint   `json:"id"`
+	UserID       uint   `json:"user_id"`
 	Nama     string `json:"nama"`
 	UserName string `json:"username"`
 	Email    string `json:"email"`
@@ -39,12 +39,19 @@ type GetUserByIdResponse struct {
 }
 
 type DelUserByIdRequest struct {
-	ID uint `json:"id"`
+	UserID uint `json:"user_id"`
 }
 
 type DelUserByIdResponse struct {
-	ID       uint   `json:"id"`
+	UserID       uint   `json:"user_id"`
 	Nama     string `json:"nama"`
 	UserName string `json:"username"`
 	Email    string `json:"email"`
+}
+
+type UserUpdate struct {
+	UserID       uint   `form:"user_id"`
+	Nama     string `form:"nama"`
+	UserName string `form:"username"`
+	Foto     string `form:"foto"`
 }

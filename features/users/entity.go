@@ -3,7 +3,7 @@ package users
 import "github.com/labstack/echo/v4"
 
 type User struct {
-	ID       uint
+	UserID       uint
 	Nama     string
 	UserName string
 	Password string
@@ -16,6 +16,7 @@ type Handler interface {
 	Login() echo.HandlerFunc
 	GetUserById() echo.HandlerFunc
 	DelUserById() echo.HandlerFunc
+	UpdateUser() echo.HandlerFunc
 }
 
 type Service interface {
@@ -23,6 +24,7 @@ type Service interface {
 	Login(username string, password string) (User, error)
 	GetUserById(id uint) (User, error)
 	DelUserById(id uint) (User, error)
+	UpdateUser(id uint, updateUser User) (User, error)
 }
 
 type Repository interface {
@@ -30,4 +32,5 @@ type Repository interface {
 	Login(username string) (User, error)
 	GetUserById(id uint) (User, error)
 	DelUserById(id uint) (User, error)
+	UpdateUser(id uint, updateUser User) (User, error)
 }

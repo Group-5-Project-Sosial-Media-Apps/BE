@@ -88,3 +88,24 @@ func (us *userService) DelUserById(id uint) (users.User, error) {
 	}
 	return result, nil
 }
+
+
+func (up *userService) UpdateUser(id uint, updateUser users.User) (users.User, error) {
+	if id == 0 {
+		return users.User{}, errors.New("invalid user ID")
+	}
+
+	// if updateUser.Nama == "" || updateUser.UserName == "" {
+	// 	return users.User{}, errors.New("incorrect input data")
+	// }
+
+	result, err := up.repo.UpdateUser(id, updateUser)
+	if err != nil {
+		if strings.Contains(err.Error(), "not found") {
+			return users.User{}, errors.New("user not found")
+		}
+		return users.User{}, errors.New("failed to update user")
+	}
+
+	return result, nil
+}
