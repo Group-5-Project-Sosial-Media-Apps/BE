@@ -2,8 +2,11 @@ package posting
 
 import (
 	"context"
+	"fmt"
+	"math"
 	"net/http"
 	"sosmed/features/posting"
+	"strconv"
 	"strings"
 
 	cld "sosmed/utils/cloudinary"
@@ -31,7 +34,6 @@ func New(s posting.Service, cld *cloudinary.Cloudinary, ctx context.Context, upl
 
 func (bc *PostingHandler) Add() echo.HandlerFunc {
 	return func(c echo.Context) error {
-		// userID, _ := jwt.ExtractToken(c.Get("user").(*gojwt.Token))
 		var input = new(PostingRequest)
 		if err := c.Bind(input); err != nil {
 			return c.JSON(http.StatusBadRequest, map[string]any{
@@ -106,5 +108,54 @@ func (bc *PostingHandler) Add() echo.HandlerFunc {
 			"message": "success create data",
 			"data":    responsePost,
 		})
+	}
+}
+
+func (ga *PostingHandler) GetAll() echo.HandlerFunc {
+	return func(c echo.Context) error {
+		page, err := strconv.Atoi(c.QueryParam("page"))
+		if err != nil || page <= 0 {
+			page = 1
+		}
+
+		pageSize, err := strconv.Atoi(c.QueryParam("pageSize"))
+		if err != nil || pageSize <= 0 {
+			pageSize = 10
+		}
+
+		dataPosting, totalCount, err := ga.s.GetAllPosting(page, pageSize)
+		if err != nil {
+			c.Logger().Error("ERROR GetAll, explain:", err.Error())
+			return c.JSON(http.StatusInternalServerError, map[string]interface{}{
+				"message": "Error retrieving paginated Kupons",
+			})
+		}
+
+		fmt.Println(dataPosting)
+
+		totalPages := int(math.Ceil(float64(totalCount) / float64(pageSize)))
+
+		var responses []PostingResponse
+		for _, result := range dataPosting {
+			response := PostingResponse{
+				PostingID: result.ID,
+				Pesan:     result.Postingan,
+				Foto:      result.Foto,
+				User: PostingResponseUser{
+					UserID:   result.Users.ID,
+					Nama:     result.Users.Nama,
+					UserName: result.Users.UserName,
+					Foto:     result.Users.Foto,
+				},
+			}
+			responses = append(responses, response)
+		}
+
+		return c.JSON(http.StatusOK, map[string]interface{}{
+			"message":    "success get all data",
+			"data":       responses,
+			"pagination": map[string]interface{}{"page": page, "pageSize": pageSize, "totalPages": totalPages},
+		})
+
 	}
 }

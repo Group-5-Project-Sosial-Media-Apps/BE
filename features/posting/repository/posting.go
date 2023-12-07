@@ -4,7 +4,6 @@ import (
 	"sosmed/features/posting"
 	model "sosmed/features/users/repository"
 
-
 	"gorm.io/gorm"
 )
 
@@ -13,6 +12,7 @@ type PostingModel struct {
 	Postingan string
 	Foto      string
 	UserID    uint
+	User      model.UserModel `gorm:"foreignKey:UserID"`
 }
 
 type postingQuery struct {
@@ -42,10 +42,37 @@ func (ip *postingQuery) InsertPosting(userID uint, newPosting posting.Posting) (
 
 	var Post PostingModel
 	ip.db.Table("posting_models").Where("user_id = ?", userID).Last(&Post)
-	newPosting.ID = userID
 	newPosting.ID = Post.ID
 	newPosting.Foto = Post.Foto
 	newPosting.Postingan = Post.Postingan
 
 	return newPosting, nil
+}
+
+func (ga *postingQuery) GetAllPosting(page, pageSize int) ([]posting.Posting, int, error) {
+	var postings []PostingModel
+	var totalCount int64
+
+	offset := (page - 1) * pageSize
+
+	if err := ga.db.Model(&PostingModel{}).Count(&totalCount).Error; err != nil {
+		return nil, 0, err
+	}
+
+	if err := ga.db.Offset(offset).Limit(pageSize).Preload("User").Find(&postings).Error; err != nil {
+		return nil, 0, err
+	}
+
+	var result []posting.Posting
+	for _, s := range postings {
+		result = append(result, posting.Posting{
+			ID:        s.ID,
+			Postingan: s.Postingan,
+			Foto:      s.Foto,
+			Users:     s.User,
+		
+		})
+	}
+
+	return result, int(totalCount), nil
 }

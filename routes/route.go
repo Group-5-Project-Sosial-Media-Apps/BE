@@ -31,7 +31,7 @@ func routeUser(e *echo.Echo, uc users.Handler) {
 
 func routePosting(e *echo.Echo, bc posting.Handler) {
 	e.POST("/post", bc.Add(), echojwt.JWT([]byte("$!1gnK3yyy!!!")))
-
+	e.GET("/allpost", bc.GetAll(), echojwt.JWT([]byte("$!1gnK3yyy!!!")))
 }
 
 
