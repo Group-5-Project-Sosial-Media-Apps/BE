@@ -24,8 +24,6 @@ func (tp *PostingServices) TambahPosting(token *golangjwt.Token, newPosting post
 	if err != nil {
 		return posting.Posting{}, err
 	}
-	
-	
 
 	result, err := tp.m.InsertPosting(userID, newPosting)
 
@@ -36,8 +34,14 @@ func (tp *PostingServices) TambahPosting(token *golangjwt.Token, newPosting post
 		return posting.Posting{}, errors.New("terjadi kesalahan pada server")
 	}
 
-
-	
-
 	return result, nil
+}
+
+func (ga *PostingServices) GetAllPosting(page int, pageSize int) ([]posting.Posting, int, error) {
+	postings, totalCount, err := ga.m.GetAllPosting(page, pageSize)
+	if err != nil {
+		return nil, 0, err
+	}
+
+	return postings, totalCount, nil
 }
