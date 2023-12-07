@@ -1,6 +1,8 @@
 package repository
 
 import (
+	"sosmed/features/comment"
+	cr "sosmed/features/comment/repository"
 	"sosmed/features/posting"
 	model "sosmed/features/users/repository"
 
@@ -12,7 +14,8 @@ type PostingModel struct {
 	Postingan string
 	Foto      string
 	UserID    uint
-	User      model.UserModel `gorm:"foreignKey:UserID"`
+	User      model.UserModel   `gorm:"foreignKey:UserID"`
+	Comment   []cr.CommentModel `gorm:"foreignKey:PostId"`
 }
 
 type postingQuery struct {
@@ -59,19 +62,33 @@ func (ga *postingQuery) GetAllPosting(page, pageSize int) ([]posting.Posting, in
 		return nil, 0, err
 	}
 
-	if err := ga.db.Offset(offset).Limit(pageSize).Preload("User").Find(&postings).Error; err != nil {
+	if err := ga.db.Offset(offset).Limit(pageSize).Preload("User").Preload("Comment").Preload("Comment.User").Find(&postings).Error; err != nil {
 		return nil, 0, err
 	}
 
 	var result []posting.Posting
 	for _, s := range postings {
-		result = append(result, posting.Posting{
-			ID:        s.ID,
-			Postingan: s.Postingan,
-			Foto:      s.Foto,
-			Users:     s.User,
-		
-		})
+		tmp := new(posting.Posting)
+		tmp.ID = s.ID
+		tmp.Postingan = s.Postingan
+		tmp.Foto = s.Foto
+		tmp.Users = s.User
+
+		for _, v := range s.Comment {
+			tmp.Comment = append(tmp.Comment, comment.Comment{
+				ID: v.ID,
+				Pesan: v.Pesan,
+				Users: v.User,
+			})
+		}
+
+		result = append(result, *tmp)
+		// result = append(result, posting.Posting{
+		// 	ID:        s.ID,
+		// 	Postingan: s.Postingan,
+		// 	Foto:      s.Foto,
+		// 	Users:     s.User,
+		// })
 	}
 
 	return result, int(totalCount), nil

@@ -50,7 +50,7 @@ func (uq *userQuery) Login(username string) (users.User, error) {
 
 	var result = new(users.User)
 
-	// result.UserID = userData.ID
+	result.UserID = userData.ID
 	result.Nama = userData.Nama
 	result.Password = userData.Password
 	result.UserName = userData.UserName
