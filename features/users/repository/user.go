@@ -50,7 +50,7 @@ func (uq *userQuery) Login(username string) (users.User, error) {
 
 	var result = new(users.User)
 
-	result.UserID = userData.ID
+	// result.UserID = userData.ID
 	result.Nama = userData.Nama
 	result.Password = userData.Password
 	result.UserName = userData.UserName
@@ -61,7 +61,7 @@ func (uq *userQuery) Login(username string) (users.User, error) {
 func (uq *userQuery) GetUserById(id uint) (users.User, error) {
 	var userData = new(UserModel)
 
-	if err := uq.db.Where("id", id).Find(&userData).Error; err != nil {
+	if err := uq.db.Where("id = ?", id).Find(&userData).Error; err != nil {
 		return users.User{}, err
 	}
 
@@ -101,7 +101,7 @@ func (us *userQuery) UpdateUser(id uint, updateUser users.User) (users.User, err
 	existingUser.UserName = updateUser.UserName
 	existingUser.Foto = updateUser.Foto
 
-	if err := us.db.Where("id = ?", id).Updates(existingUser).Error; err != nil {
+	if err := us.db.Where("id", id).Updates(existingUser).Error; err != nil {
 		return users.User{}, err
 	}
 

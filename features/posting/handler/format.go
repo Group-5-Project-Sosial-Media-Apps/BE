@@ -9,12 +9,33 @@ type PostingResponse struct {
 	PostingID uint   `json:"posting_id"`
 	Pesan     string `json:"pesan"`
 	Foto      string `json:"foto"`
-	User      PostingResponseUser
+	// UserID    uint   `json:"userid"`
+	// UserName  string `json:"username"`
+	User PostingResponseUser
 }
 
 type PostingResponseUser struct {
-	UserID   uint   `form:"user_id"`
-	Nama     string `form:"nama"`
-	UserName string `form:"username"`
-	Foto     string `form:"foto"`
+	UserID   uint   `json:"user_id"`
+	Nama     string `json:"nama"`
+	UserName string `json:"username"`
+	Foto     string `json:"foto"`
 }
+
+// type PostingResponseUser struct {
+// 	UserID   uint   `form:"user_id"`
+// 	Nama     string `form:"nama"`
+// 	UserName string `form:"username"`
+// 	Foto     string `form:"foto"`
+// }
+
+// type TotalPosting struct {
+// 	ID        uint
+// 	Postingan string
+// 	Foto      string
+// 	Users     struct {
+// 		ID       uint
+// 		Nama     string
+// 		UserName string
+// 		Foto     string
+// 	}
+// }
