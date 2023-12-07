@@ -10,6 +10,7 @@ import (
 type Comment struct {
 	ID    uint
 	Pesan  string
+	PostID uint
 	Users model.UserModel
 }
 

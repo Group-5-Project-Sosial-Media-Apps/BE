@@ -11,6 +11,8 @@ type CommentModel struct {
 	gorm.Model
 	Pesan  string
 	UserID uint
+	PostId uint
+	User   model.UserModel `gorm:"foreignKey:UserID"`
 }
 
 type commentQuery struct {
@@ -28,6 +30,7 @@ func (ic *commentQuery) InsertComment(userID uint, newComment comment.Comment) (
 	var inputData = new(CommentModel)
 	inputData.UserID = userID
 	inputData.Pesan = newComment.Pesan
+	inputData.PostId = newComment.PostID
 
 	if err := ic.db.Create(&inputData).Error; err != nil {
 		return comment.Comment{}, err

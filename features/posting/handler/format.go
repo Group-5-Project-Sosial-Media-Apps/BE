@@ -11,7 +11,14 @@ type PostingResponse struct {
 	Foto      string `json:"foto"`
 	// UserID    uint   `json:"userid"`
 	// UserName  string `json:"username"`
-	User PostingResponseUser
+	User    PostingResponseUser `json:"user"`
+	Comment []CommentResponse   `json:"comment"`
+}
+
+type CommentResponse struct {
+	CommentID uint                `json:"Comment_id"`
+	Pesan     string              `json:"pesan"`
+	User      PostingResponseUser `json:"user"`
 }
 
 type PostingResponseUser struct {

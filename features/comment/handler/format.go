@@ -1,6 +1,7 @@
 package comment
 
 type CommentRequest struct {
+	PostingID uint `form:"postingid"`
 	Pesan string `form:"pesan"`
 }
 

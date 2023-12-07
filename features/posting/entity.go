@@ -1,6 +1,7 @@
 package posting
 
 import (
+	"sosmed/features/comment"
 	"sosmed/features/users"
 	model "sosmed/features/users/repository"
 
@@ -14,6 +15,7 @@ type Posting struct {
 	Foto      string
 	Users     model.UserModel
 	User      []users.User
+	Comment   []comment.Comment
 }
 
 type Handler interface {
