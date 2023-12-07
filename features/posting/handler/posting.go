@@ -148,6 +148,20 @@ func (ga *PostingHandler) GetAll() echo.HandlerFunc {
 					Foto:     result.Users.Foto,
 				},
 			}
+
+			for _, v := range result.Comment {
+				response.Comment = append(response.Comment, CommentResponse{
+					CommentID: v.ID,
+					Pesan:     v.Pesan,
+					User: PostingResponseUser{
+						UserID:   v.Users.ID,
+						Nama:     v.Users.Nama,
+						UserName: v.Users.UserName,
+						Foto:     v.Users.Foto,
+					},
+				})
+
+			}
 			responses = append(responses, response)
 		}
 

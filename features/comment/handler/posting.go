@@ -31,6 +31,7 @@ func (bc *CommentHandler) Add() echo.HandlerFunc {
 
 		var inputProcess = new(comment.Comment)
 		inputProcess.Pesan = input.Pesan
+		inputProcess.PostID = input.PostingID
 
 		result, err := bc.s.TambahComment(c.Get("user").(*gojwt.Token), *inputProcess)
 
