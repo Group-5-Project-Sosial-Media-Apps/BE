@@ -1,8 +1,8 @@
 package comment
 
 type CommentRequest struct {
-	PostingID uint `form:"postingid"`
-	Pesan string `form:"pesan"`
+	PostingID uint   `json:"postingid"`
+	Pesan     string `json:"pesan"`
 }
 
 type CommentResponse struct {

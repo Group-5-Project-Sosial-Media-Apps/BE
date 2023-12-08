@@ -23,16 +23,22 @@ type Handler interface {
 	Add() echo.HandlerFunc
 	GetAll() echo.HandlerFunc
 	GetByID() echo.HandlerFunc
+	UpdatePosting() echo.HandlerFunc
+	DelPost() echo.HandlerFunc
 }
 
 type Service interface {
 	TambahPosting(token *jwt.Token, newPosting Posting) (Posting, error)
 	GetAllPosting(page, pageSize int) ([]Posting, int, error)
 	GetPostingById(userID uint) ([]Posting, error)
+	UpdatePosting(idPosting uint, updatePosting Posting) (Posting, error)
+	DelPost(PostID uint) (Posting, error)
 }
 
 type Repo interface {
 	InsertPosting(userID uint, newPosting Posting) (Posting, error)
 	GetAllPosting(page, pageSize int) ([]Posting, int, error)
 	GetPostingById(userID uint) ([]Posting, error)
+	UpdatePosting(idPosting uint, updatePosting Posting) (Posting, error)
+	DelPost(PostID uint) (Posting, error)
 }
