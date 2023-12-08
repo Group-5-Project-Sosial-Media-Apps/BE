@@ -24,7 +24,6 @@ type PostingHandler struct {
 	folder string
 }
 
-
 func New(s posting.Service, cld *cloudinary.Cloudinary, ctx context.Context, uploadparam string) posting.Handler {
 	return &PostingHandler{
 		s:      s,
@@ -195,24 +194,44 @@ func (gp *PostingHandler) GetByID() echo.HandlerFunc {
 			})
 		}
 
-
 		var response []PostingResponse
 		for _, v := range results {
 			response = append(response, PostingResponse{
 				PostingID: v.ID,
-				Pesan: v.Postingan,
+				Pesan:     v.Postingan,
 				User: PostingResponseUser{
-					UserID: v.UserID,
-					Nama: v.Users.Nama,
+					UserID:   v.UserID,
+					Nama:     v.Users.Nama,
 					UserName: v.Users.UserName,
 				},
-				
 			})
 		}
 
 		return c.JSON(http.StatusOK, map[string]interface{}{
 			"message": "success get data by ID",
 			"data":    response,
+		})
+	}
+}
+
+func (dp *PostingHandler) DelPost() echo.HandlerFunc {
+	return func(c echo.Context) error {
+		var input = new(DelPost)
+		if err := c.Bind(input); err != nil {
+			return c.JSON(http.StatusBadRequest, map[string]any{
+				"message": "input yang diberikan tidak sesuai",
+			})
+		}
+
+		result, err := dp.s.DelPost(input.PostID)
+		if err != nil || result.ID != input.PostID {
+			return c.JSON(http.StatusBadRequest, map[string]any{
+				"message": "post tidak ditemukan ygy",
+			})
+		}
+
+		return c.JSON(http.StatusOK, map[string]any{
+			"message": "delete user by userID successful",
 		})
 	}
 }

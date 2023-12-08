@@ -46,3 +46,7 @@ type PostingResponseUser struct {
 // 		Foto     string
 // 	}
 // }
+
+type DelPost struct {
+	PostID uint `json:"post_id"`
+}

@@ -95,7 +95,6 @@ func (ga *postingQuery) GetAllPosting(page, pageSize int) ([]posting.Posting, in
 	return result, int(totalCount), nil
 }
 
-
 func (gp *postingQuery) GetPostingById(userID uint) ([]posting.Posting, error) {
 	var results []PostingModel
 
@@ -108,20 +107,34 @@ func (gp *postingQuery) GetPostingById(userID uint) ([]posting.Posting, error) {
 	}
 
 	var response []posting.Posting
-		for _, result := range results {
-			response = append(response, posting.Posting{
-				ID:        result.ID,
-				Postingan: result.Postingan,
-				Foto: result.Foto,
-				UserID: userID,
-				Users: model.UserModel{
-					Nama: result.User.Nama,
-					UserName: result.User.UserName,
-					Foto: result.User.Foto,
-				},
-				},
-			)}
-		
+	for _, result := range results {
+		response = append(response, posting.Posting{
+			ID:        result.ID,
+			Postingan: result.Postingan,
+			Foto:      result.Foto,
+			UserID:    userID,
+			Users: model.UserModel{
+				Nama:     result.User.Nama,
+				UserName: result.User.UserName,
+				Foto:     result.User.Foto,
+			},
+		},
+		)
+	}
 
 	return response, nil
+}
+
+func (dp *postingQuery) DelPost(PostID uint) (posting.Posting, error) {
+	var postData = new(PostingModel)
+
+	if err := dp.db.Where("id", PostID).Find(&postData).Error; err != nil {
+		return posting.Posting{}, err
+	}
+
+	var result = new(posting.Posting)
+	result.ID = postData.ID
+
+	dp.db.Where("id", PostID).Delete(&postData)
+	return *result, nil
 }
