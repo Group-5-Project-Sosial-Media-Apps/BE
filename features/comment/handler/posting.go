@@ -64,3 +64,25 @@ func (bc *CommentHandler) Add() echo.HandlerFunc {
 		})
 	}
 }
+
+func (bc *CommentHandler) DelComment() echo.HandlerFunc {
+	return func(c echo.Context) error {
+		var input = new(DelCommentByIdRequest)
+		if err := c.Bind(input); err != nil {
+			return c.JSON(http.StatusBadRequest, map[string]any{
+				"message": "input yang diberikan tidak sesuai",
+			})
+		}
+
+		result, err := bc.s.DelComment(input.CommentID)
+		if err != nil || result.ID != input.CommentID {
+			return c.JSON(http.StatusBadRequest, map[string]any{
+				"message": "comment tidak ditemukan",
+			})
+		}
+
+		return c.JSON(http.StatusOK, map[string]any{
+			"message": "delete comment by commentID successful",
+		})
+	}
+}

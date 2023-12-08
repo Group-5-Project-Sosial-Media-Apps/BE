@@ -13,7 +13,6 @@ type CommentServices struct {
 	m comment.Repo
 }
 
-
 func New(model comment.Repo) comment.Service {
 	return &CommentServices{
 		m: model,
@@ -35,5 +34,17 @@ func (tc *CommentServices) TambahComment(token *golangjwt.Token, newComment comm
 		return comment.Comment{}, errors.New("terjadi kesalahan pada server")
 	}
 
+	return result, nil
+}
+
+func (tc *CommentServices) DelComment(commentID uint) (comment.Comment, error) {
+	result, err := tc.m.DelComment(commentID)
+
+	if err != nil {
+		if strings.Contains(err.Error(), "not found") {
+			return comment.Comment{}, errors.New("username tidak ditemukan")
+		}
+		return comment.Comment{}, errors.New("terjadi kesalahan pada sistem")
+	}
 	return result, nil
 }

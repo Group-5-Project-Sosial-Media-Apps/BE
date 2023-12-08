@@ -48,3 +48,17 @@ func (ic *commentQuery) InsertComment(userID uint, newComment comment.Comment) (
 
 	return newComment, nil
 }
+
+func (uq *commentQuery) DelComment(CommentID uint) (comment.Comment, error) {
+	var commentData = new(CommentModel)
+
+	if err := uq.db.Where("id", CommentID).Find(&commentData).Error; err != nil {
+		return comment.Comment{}, err
+	}
+
+	var result = new(comment.Comment)
+	result.ID = commentData.ID
+
+	uq.db.Where("id", CommentID).Delete(&commentData)
+	return *result, nil
+}

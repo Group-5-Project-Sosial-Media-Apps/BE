@@ -42,4 +42,5 @@ func routePosting(e *echo.Echo, bc posting.Handler) {
 
 func routeComment(e *echo.Echo, cs comment.Handler) {
 	e.POST("/comment", cs.Add(), echojwt.JWT([]byte("$!1gnK3yyy!!!")))
+	e.DELETE("/comment", cs.DelComment(), echojwt.JWT([]byte("$!1gnK3yyy!!!")))
 }

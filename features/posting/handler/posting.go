@@ -214,10 +214,9 @@ func (gp *PostingHandler) GetByID() echo.HandlerFunc {
 	}
 }
 
-
 func (up *PostingHandler) UpdatePosting() echo.HandlerFunc {
 	return func(c echo.Context) error {
-		
+
 		var input = new(PostingUpdate)
 		if err := c.Bind(input); err != nil {
 			return c.JSON(http.StatusBadRequest, map[string]interface{}{
@@ -253,8 +252,6 @@ func (up *PostingHandler) UpdatePosting() echo.HandlerFunc {
 				}
 			}
 
-
-
 			input.Foto = link
 
 		}
@@ -282,7 +279,10 @@ func (up *PostingHandler) UpdatePosting() echo.HandlerFunc {
 		return c.JSON(http.StatusOK, map[string]interface{}{
 			"message": "posting updated successfully",
 			"data":    response,
-      
+		})
+	}
+}
+
 func (dp *PostingHandler) DelPost() echo.HandlerFunc {
 	return func(c echo.Context) error {
 		var input = new(DelPost)
@@ -301,7 +301,6 @@ func (dp *PostingHandler) DelPost() echo.HandlerFunc {
 
 		return c.JSON(http.StatusOK, map[string]any{
 			"message": "delete user by userID successful",
-
 		})
 	}
 }

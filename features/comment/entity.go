@@ -8,20 +8,23 @@ import (
 )
 
 type Comment struct {
-	ID    uint
+	ID     uint
 	Pesan  string
 	PostID uint
-	Users model.UserModel
+	Users  model.UserModel
 }
 
 type Handler interface {
 	Add() echo.HandlerFunc
+	DelComment() echo.HandlerFunc
 }
 
 type Service interface {
 	TambahComment(token *jwt.Token, newComment Comment) (Comment, error)
+	DelComment(commentID uint) (Comment, error)
 }
 
 type Repo interface {
 	InsertComment(userID uint, newComment Comment) (Comment, error)
+	DelComment(commentID uint) (Comment, error)
 }

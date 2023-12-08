@@ -17,3 +17,7 @@ type CommentResponseUser struct {
 	UserName string `form:"username"`
 	Foto     string `form:"foto"`
 }
+
+type DelCommentByIdRequest struct {
+	CommentID uint `json:"comment_id"`
+}
