@@ -28,25 +28,15 @@ type PostingResponseUser struct {
 	Foto     string `json:"foto"`
 }
 
-// type PostingResponseUser struct {
-// 	UserID   uint   `form:"user_id"`
-// 	Nama     string `form:"nama"`
-// 	UserName string `form:"username"`
-// 	Foto     string `form:"foto"`
-// }
 
-// type TotalPosting struct {
-// 	ID        uint
-// 	Postingan string
-// 	Foto      string
-// 	Users     struct {
-// 		ID       uint
-// 		Nama     string
-// 		UserName string
-// 		Foto     string
-// 	}
-// }
+type PostingUpdate struct {
+	PostingID uint `form:"postingid"`
+	Posting string `form:"posting"`
+	Foto     string `form:"foto"`
+}
+
 
 type DelPost struct {
 	PostID uint `json:"post_id"`
 }
+

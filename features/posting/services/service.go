@@ -60,6 +60,18 @@ func (gp *PostingServices) GetPostingById(userID uint) ([]posting.Posting, error
 	return result, nil
 }
 
+
+func (up *PostingServices) UpdatePosting(idPosting uint, updatePosting posting.Posting) (posting.Posting, error) {
+
+	result, err := up.m.UpdatePosting(idPosting, updatePosting)
+	if err != nil {
+		if strings.Contains(err.Error(), "not found") {
+			return posting.Posting{}, errors.New("failed to update posting")
+		}
+		return posting.Posting{}, errors.New("failed to update posting")
+	}
+
+
 func (dp *PostingServices) DelPost(postID uint) (posting.Posting, error) {
 	result, err := dp.m.DelPost(postID)
 	if err != nil {
@@ -68,5 +80,6 @@ func (dp *PostingServices) DelPost(postID uint) (posting.Posting, error) {
 		}
 		return posting.Posting{}, errors.New("terjadi kesalahan pada sistem")
 	}
+
 	return result, nil
 }
