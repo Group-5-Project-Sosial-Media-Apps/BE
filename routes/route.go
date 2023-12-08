@@ -33,8 +33,8 @@ func routePosting(e *echo.Echo, bc posting.Handler) {
 	e.POST("/post", bc.Add(), echojwt.JWT([]byte("$!1gnK3yyy!!!")))
 	e.GET("/allpost", bc.GetAll(), echojwt.JWT([]byte("$!1gnK3yyy!!!")))
 	e.GET("/postbyid", bc.GetByID(), echojwt.JWT([]byte("$!1gnK3yyy!!!")))
+	e.DELETE("/delpost", bc.DelPost(), echojwt.JWT([]byte("$!1gnK3yyy!!!")))
 }
-
 
 func routeComment(e *echo.Echo, cs comment.Handler) {
 	e.POST("/comment", cs.Add(), echojwt.JWT([]byte("$!1gnK3yyy!!!")))

@@ -13,7 +13,6 @@ type PostingServices struct {
 	m posting.Repo
 }
 
-
 func New(model posting.Repo) posting.Service {
 	return &PostingServices{
 		m: model,
@@ -47,9 +46,8 @@ func (ga *PostingServices) GetAllPosting(page int, pageSize int) ([]posting.Post
 	return postings, totalCount, nil
 }
 
-
 func (gp *PostingServices) GetPostingById(userID uint) ([]posting.Posting, error) {
-	
+
 	result, err := gp.m.GetPostingById(userID)
 
 	if err != nil {
@@ -59,5 +57,16 @@ func (gp *PostingServices) GetPostingById(userID uint) ([]posting.Posting, error
 		return nil, errors.New("error retrieving Kupon by ID")
 	}
 
+	return result, nil
+}
+
+func (dp *PostingServices) DelPost(postID uint) (posting.Posting, error) {
+	result, err := dp.m.DelPost(postID)
+	if err != nil {
+		if strings.Contains(err.Error(), "not found") {
+			return posting.Posting{}, errors.New("username tidak ditemukan")
+		}
+		return posting.Posting{}, errors.New("terjadi kesalahan pada sistem")
+	}
 	return result, nil
 }
