@@ -6,7 +6,6 @@ Untuk detail request body dapat dilihat dalam OpenAPI di link berikut: https://a
 
 # REST API
 
-The REST API to the example app is described below.
 Dibawah ini adalah list REST API meliputi Request dan Response.
 
 ## Login
