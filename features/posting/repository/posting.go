@@ -1,6 +1,7 @@
 package repository
 
 import (
+	"errors"
 	"sosmed/features/comment"
 	cr "sosmed/features/comment/repository"
 	"sosmed/features/posting"
@@ -76,7 +77,7 @@ func (ga *postingQuery) GetAllPosting(page, pageSize int) ([]posting.Posting, in
 
 		for _, v := range s.Comment {
 			tmp.Comment = append(tmp.Comment, comment.Comment{
-				ID: v.ID,
+				ID:    v.ID,
 				Pesan: v.Pesan,
 				Users: v.User,
 			})
@@ -92,4 +93,35 @@ func (ga *postingQuery) GetAllPosting(page, pageSize int) ([]posting.Posting, in
 	}
 
 	return result, int(totalCount), nil
+}
+
+
+func (gp *postingQuery) GetPostingById(userID uint) ([]posting.Posting, error) {
+	var results []PostingModel
+
+	// Find the Kupon by ID
+	if err := gp.db.Where("user_id = ?", userID).Preload("User").Find(&results).Error; err != nil {
+		if err == gorm.ErrRecordNotFound {
+			return nil, errors.New("kupon not found")
+		}
+		return nil, err
+	}
+
+	var response []posting.Posting
+		for _, result := range results {
+			response = append(response, posting.Posting{
+				ID:        result.ID,
+				Postingan: result.Postingan,
+				Foto: result.Foto,
+				UserID: userID,
+				Users: model.UserModel{
+					Nama: result.User.Nama,
+					UserName: result.User.UserName,
+					Foto: result.User.Foto,
+				},
+				},
+			)}
+		
+
+	return response, nil
 }
