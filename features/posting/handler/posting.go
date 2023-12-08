@@ -6,6 +6,7 @@ import (
 	"math"
 	"net/http"
 	"sosmed/features/posting"
+	"sosmed/helper/jwt"
 	"strconv"
 	"strings"
 
@@ -22,6 +23,7 @@ type PostingHandler struct {
 	ct     context.Context
 	folder string
 }
+
 
 func New(s posting.Service, cld *cloudinary.Cloudinary, ctx context.Context, uploadparam string) posting.Handler {
 	return &PostingHandler{
@@ -171,5 +173,46 @@ func (ga *PostingHandler) GetAll() echo.HandlerFunc {
 			"pagination": map[string]interface{}{"page": page, "pageSize": pageSize, "totalPages": totalPages},
 		})
 
+	}
+}
+
+func (gp *PostingHandler) GetByID() echo.HandlerFunc {
+	return func(c echo.Context) error {
+		userID, _ := jwt.ExtractToken(c.Get("user").(*gojwt.Token))
+
+		results, err := gp.s.GetPostingById(uint(userID))
+		if err != nil {
+			c.Logger().Error("ERROR GetByID, explain:", err.Error())
+
+			if strings.Contains(err.Error(), "not found") {
+				return c.JSON(http.StatusNotFound, map[string]interface{}{
+					"message": "Posting not found",
+				})
+			}
+
+			return c.JSON(http.StatusInternalServerError, map[string]interface{}{
+				"message": "Error retrieving Posting by ID",
+			})
+		}
+
+
+		var response []PostingResponse
+		for _, v := range results {
+			response = append(response, PostingResponse{
+				PostingID: v.ID,
+				Pesan: v.Postingan,
+				User: PostingResponseUser{
+					UserID: v.UserID,
+					Nama: v.Users.Nama,
+					UserName: v.Users.UserName,
+				},
+				
+			})
+		}
+
+		return c.JSON(http.StatusOK, map[string]interface{}{
+			"message": "success get data by ID",
+			"data":    response,
+		})
 	}
 }
