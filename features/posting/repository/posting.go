@@ -95,7 +95,6 @@ func (ga *postingQuery) GetAllPosting(page, pageSize int) ([]posting.Posting, in
 	return result, int(totalCount), nil
 }
 
-
 func (gp *postingQuery) GetPostingById(userID uint) ([]posting.Posting, error) {
 	var results []PostingModel
 
@@ -108,20 +107,49 @@ func (gp *postingQuery) GetPostingById(userID uint) ([]posting.Posting, error) {
 	}
 
 	var response []posting.Posting
-		for _, result := range results {
-			response = append(response, posting.Posting{
-				ID:        result.ID,
-				Postingan: result.Postingan,
-				Foto: result.Foto,
-				UserID: userID,
-				Users: model.UserModel{
-					Nama: result.User.Nama,
-					UserName: result.User.UserName,
-					Foto: result.User.Foto,
-				},
-				},
-			)}
-		
+	for _, result := range results {
+		response = append(response, posting.Posting{
+			ID:        result.ID,
+			Postingan: result.Postingan,
+			Foto:      result.Foto,
+			UserID:    userID,
+			Users: model.UserModel{
+				Nama:     result.User.Nama,
+				UserName: result.User.UserName,
+				Foto:     result.User.Foto,
+			},
+		},
+		)
+	}
 
 	return response, nil
+}
+
+func (up *postingQuery) UpdatePosting(idPosting uint, updatePosting posting.Posting) (posting.Posting, error) {
+	var existingPosting = new(PostingModel)
+	existingPosting.Postingan = updatePosting.Postingan
+	existingPosting.Foto = updatePosting.Foto
+
+	if err := up.db.Where("id = ?", idPosting).Updates(existingPosting).Error; err != nil {
+		return posting.Posting{}, err
+	}
+
+	if updatePosting.ID != 0 {
+		existingPosting.ID = updatePosting.ID
+	}
+
+	if updatePosting.Postingan != "" {
+		existingPosting.Postingan = updatePosting.Postingan
+	}
+
+	if updatePosting.Foto != "" {
+		existingPosting.Foto = updatePosting.Foto
+	}
+
+	result := posting.Posting{
+		ID:        existingPosting.ID,
+		Postingan: existingPosting.Postingan,
+		Foto:      existingPosting.Foto,
+	}
+	return result, nil
 }

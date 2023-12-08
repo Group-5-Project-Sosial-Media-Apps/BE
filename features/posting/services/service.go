@@ -13,7 +13,6 @@ type PostingServices struct {
 	m posting.Repo
 }
 
-
 func New(model posting.Repo) posting.Service {
 	return &PostingServices{
 		m: model,
@@ -47,9 +46,8 @@ func (ga *PostingServices) GetAllPosting(page int, pageSize int) ([]posting.Post
 	return postings, totalCount, nil
 }
 
-
 func (gp *PostingServices) GetPostingById(userID uint) ([]posting.Posting, error) {
-	
+
 	result, err := gp.m.GetPostingById(userID)
 
 	if err != nil {
@@ -57,6 +55,19 @@ func (gp *PostingServices) GetPostingById(userID uint) ([]posting.Posting, error
 			return nil, errors.New("posting not found")
 		}
 		return nil, errors.New("error retrieving Kupon by ID")
+	}
+
+	return result, nil
+}
+
+func (up *PostingServices) UpdatePosting(idPosting uint, updatePosting posting.Posting) (posting.Posting, error) {
+
+	result, err := up.m.UpdatePosting(idPosting, updatePosting)
+	if err != nil {
+		if strings.Contains(err.Error(), "not found") {
+			return posting.Posting{}, errors.New("failed to update posting")
+		}
+		return posting.Posting{}, errors.New("failed to update posting")
 	}
 
 	return result, nil
