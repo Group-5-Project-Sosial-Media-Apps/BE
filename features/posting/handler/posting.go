@@ -214,9 +214,9 @@ func (gp *PostingHandler) GetByID() echo.HandlerFunc {
 	}
 }
 
+
 func (up *PostingHandler) UpdatePosting() echo.HandlerFunc {
 	return func(c echo.Context) error {
-		// userID, _ := jwt.ExtractToken(c.Get("user").(*golangjwt.Token))
 		
 		var input = new(PostingUpdate)
 		if err := c.Bind(input); err != nil {
@@ -253,7 +253,7 @@ func (up *PostingHandler) UpdatePosting() echo.HandlerFunc {
 				}
 			}
 
-			// var update = link
+
 
 			input.Foto = link
 
@@ -282,6 +282,26 @@ func (up *PostingHandler) UpdatePosting() echo.HandlerFunc {
 		return c.JSON(http.StatusOK, map[string]interface{}{
 			"message": "posting updated successfully",
 			"data":    response,
+      
+func (dp *PostingHandler) DelPost() echo.HandlerFunc {
+	return func(c echo.Context) error {
+		var input = new(DelPost)
+		if err := c.Bind(input); err != nil {
+			return c.JSON(http.StatusBadRequest, map[string]any{
+				"message": "input yang diberikan tidak sesuai",
+			})
+		}
+
+		result, err := dp.s.DelPost(input.PostID)
+		if err != nil || result.ID != input.PostID {
+			return c.JSON(http.StatusBadRequest, map[string]any{
+				"message": "post tidak ditemukan ygy",
+			})
+		}
+
+		return c.JSON(http.StatusOK, map[string]any{
+			"message": "delete user by userID successful",
+
 		})
 	}
 }

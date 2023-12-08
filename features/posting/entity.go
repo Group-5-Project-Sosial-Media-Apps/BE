@@ -24,6 +24,7 @@ type Handler interface {
 	GetAll() echo.HandlerFunc
 	GetByID() echo.HandlerFunc
 	UpdatePosting() echo.HandlerFunc
+	DelPost() echo.HandlerFunc
 }
 
 type Service interface {
@@ -31,6 +32,7 @@ type Service interface {
 	GetAllPosting(page, pageSize int) ([]Posting, int, error)
 	GetPostingById(userID uint) ([]Posting, error)
 	UpdatePosting(idPosting uint, updatePosting Posting) (Posting, error)
+	DelPost(PostID uint) (Posting, error)
 }
 
 type Repo interface {
@@ -38,4 +40,5 @@ type Repo interface {
 	GetAllPosting(page, pageSize int) ([]Posting, int, error)
 	GetPostingById(userID uint) ([]Posting, error)
 	UpdatePosting(idPosting uint, updatePosting Posting) (Posting, error)
+	DelPost(PostID uint) (Posting, error)
 }

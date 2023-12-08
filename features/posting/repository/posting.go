@@ -125,6 +125,7 @@ func (gp *postingQuery) GetPostingById(userID uint) ([]posting.Posting, error) {
 	return response, nil
 }
 
+
 func (up *postingQuery) UpdatePosting(idPosting uint, updatePosting posting.Posting) (posting.Posting, error) {
 	var existingPosting = new(PostingModel)
 	existingPosting.Postingan = updatePosting.Postingan
@@ -152,4 +153,18 @@ func (up *postingQuery) UpdatePosting(idPosting uint, updatePosting posting.Post
 		Foto:      existingPosting.Foto,
 	}
 	return result, nil
+
+func (dp *postingQuery) DelPost(PostID uint) (posting.Posting, error) {
+	var postData = new(PostingModel)
+
+	if err := dp.db.Where("id", PostID).Find(&postData).Error; err != nil {
+		return posting.Posting{}, err
+	}
+
+	var result = new(posting.Posting)
+	result.ID = postData.ID
+
+	dp.db.Where("id", PostID).Delete(&postData)
+	return *result, nil
+
 }
